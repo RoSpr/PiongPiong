@@ -11,7 +11,8 @@ import SwiftUI
 struct PiongPiongApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView(viewModel: TableViewModel())
+                .preferredColorScheme(.light)
         }
     }
 }
