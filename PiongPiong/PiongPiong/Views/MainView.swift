@@ -31,7 +31,7 @@ struct MainView: View {
             HStack {
                 Grid(horizontalSpacing: 5, verticalSpacing: 5) {
                     Text("")
-                        .frame(width: 70, height: 10)
+                        .frame(width: 70, height: 20)
                     
                     TextField(firstPlayerName, text: $firstPlayerName)
                         .frame(width: 70, height: 50)
@@ -47,11 +47,21 @@ struct MainView: View {
                         HStack {
                             GridRow {
                                 ForEach(viewModel.columns.indices, id: \.self) { index in
-                                    Text(DateFormatter.tableDate.string(from: viewModel.columns[index].date))
-                                        .frame(width: 65, height: 15, alignment: .center)
-                                        .minimumScaleFactor(0.75)
-                                        .multilineTextAlignment(.center)
-                                        .font(.footnote)
+                                    HStack {
+                                        Text(DateFormatter.tableDate.string(from: viewModel.columns[index].date))
+                                            .frame(height: 20, alignment: .center)
+                                            .minimumScaleFactor(0.75)
+                                            .multilineTextAlignment(.center)
+                                            .font(.footnote)
+                                        Button(action: {
+                                            viewModel.removeEntryAt(index: index)
+                                        }) {
+                                            Image(systemName: "x.circle")
+                                                .font(.caption2)
+                                                .foregroundColor(.red)
+                                        }
+                                    }
+                                    .frame(width: 65, height: 15)
                                 }
                             }
                             .frame(width: 65)

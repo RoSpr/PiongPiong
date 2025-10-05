@@ -56,4 +56,9 @@ final class TableViewModel: ObservableObject {
         columns.append(newColumn)
         gamesTotal = columns.count
     }
+    
+    func removeEntryAt(index: Int) {
+        guard columns.indices.contains(index) else { return }
+        columns.remove(at: index)
+    }
 }
