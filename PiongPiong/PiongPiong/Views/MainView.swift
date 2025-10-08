@@ -10,8 +10,8 @@ import Combine
 
 struct MainView: View {
     @StateObject var viewModel: TableViewModel
-    @AppStorage("firstPlayerName") var firstPlayerName: String = "Player 1"
-    @AppStorage("secondPlayerName") var secondPlayerName: String = "Player 2"
+    @AppStorage(UserDefaultsKeys.firstPlayerName.rawValue) var firstPlayerName: String = "Player 1"
+    @AppStorage(UserDefaultsKeys.secondPlayerName.rawValue) var secondPlayerName: String = "Player 2"
     
     var body: some View {
         VStack {
