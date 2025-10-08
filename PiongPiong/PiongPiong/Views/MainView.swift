@@ -82,10 +82,9 @@ struct MainView: View {
                         HStack {
                             GridRow {
                                 ForEach(viewModel.columns.indices, id: \.self) { index in
-                                    SelectableCell(isSelected: viewModel.columns[index].selection == .firstPlayer, action: {
-                                        guard !viewModel.isUIBlocked else  { return }
+                                    SelectableCell(isSelected: viewModel.columns[index].selection == .firstPlayer, isUIBlocked: viewModel.isUIBlocked) {
                                         viewModel.selectInRow(index, selection: .firstPlayer)
-                                    })
+                                    }
                                 }
                             }
                             .frame(width: 65, height: 65)
@@ -94,8 +93,7 @@ struct MainView: View {
                         HStack {
                             GridRow {
                                 ForEach(viewModel.columns.indices, id: \.self) { index in
-                                    SelectableCell(isSelected: viewModel.columns[index].selection == .secondPlayer) {
-                                        guard !viewModel.isUIBlocked else  { return }
+                                    SelectableCell(isSelected: viewModel.columns[index].selection == .secondPlayer, isUIBlocked: viewModel.isUIBlocked) {
                                         viewModel.selectInRow(index, selection: .secondPlayer)
                                     }
                                 }

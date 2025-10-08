@@ -9,10 +9,14 @@ import SwiftUI
 
 struct SelectableCell: View {
     var isSelected: Bool = false
+    var isUIBlocked: Bool
     var action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            guard !isUIBlocked else { return }
+            action()
+        }) {
             RoundedRectangle(cornerRadius: 10)
                 .fill(isSelected ? Color.blue.opacity(0.7) : Color.red.opacity(0.5))
         }

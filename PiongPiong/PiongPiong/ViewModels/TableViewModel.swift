@@ -12,7 +12,7 @@ final class TableViewModel: ObservableObject {
     private let udHelper = UserDefaultsManager()
     private var cancellables = Set<AnyCancellable>()
     
-    @Published var columns: [ColumnData] = []
+    @Published var columns: [ColumnData]
     @Published var firstPlayerWins: Int = 0
     @Published var secondPlayerWins: Int = 0
     @Published var gamesTotal: Int = 0
@@ -27,7 +27,6 @@ final class TableViewModel: ObservableObject {
     
     private func bind() {
         $columns
-            .dropFirst()
             .sink { [weak self] newValue in
                 guard let self = self else { return }
                 self.udHelper.saveColumns(newValue)
