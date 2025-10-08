@@ -21,4 +21,12 @@ final class UserDefaultsManager {
         }
         return columns
     }
+    
+    func saveValue(_ value: Any, key: UserDefaultsKeys) {
+        UserDefaults.standard.set(value, forKey: key.rawValue)
+    }
+    
+    func getValue(_ key: UserDefaultsKeys) -> Any? {
+        return UserDefaults.standard.value(forKey: key.rawValue)
+    }
 }

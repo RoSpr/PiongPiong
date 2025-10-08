@@ -16,20 +16,31 @@ final class TableViewModel: ObservableObject {
     @Published var firstPlayerWins: Int = 0
     @Published var secondPlayerWins: Int = 0
     @Published var gamesTotal: Int = 0
+    @Published var isUIBlocked: Bool
     
     init() {
         columns = udHelper.getColumns()
+        isUIBlocked = udHelper.getValue(.isUIBlocked) as? Bool ?? false
         
         bind()
     }
     
     private func bind() {
         $columns
+            .dropFirst()
             .sink { [weak self] newValue in
                 guard let self = self else { return }
                 self.udHelper.saveColumns(newValue)
                 self.gamesTotal = newValue.count
                 self.countWins(newValue)
+            }
+            .store(in: &cancellables)
+        
+        $isUIBlocked
+            .dropFirst()
+            .sink { [weak self] isBlocked in
+                guard let self = self else { return }
+                self.udHelper.saveValue(isBlocked, key: .isUIBlocked)
             }
             .store(in: &cancellables)
     }
@@ -58,7 +69,10 @@ final class TableViewModel: ObservableObject {
     }
     
     func removeEntryAt(index: Int) {
-        guard columns.indices.contains(index) else { return }
+        guard
+            !isUIBlocked,
+            columns.indices.contains(index)
+        else { return }
         columns.remove(at: index)
     }
 }

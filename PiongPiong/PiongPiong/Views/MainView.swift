@@ -30,16 +30,26 @@ struct MainView: View {
             
             HStack {
                 Grid(horizontalSpacing: 5, verticalSpacing: 5) {
-                    Text("")
-                        .frame(width: 70, height: 20)
+                    HStack {
+                        Button(action: {
+                            viewModel.isUIBlocked.toggle()
+                        }, label: {
+                            Image(systemName: viewModel.isUIBlocked ? "lock" : "lock.open")
+                        })
+                        
+                        Spacer()
+                            .frame(width: 45, height: 20)
+                    }
                     
                     TextField(firstPlayerName, text: $firstPlayerName)
                         .frame(width: 70, height: 50)
                         .padding([.leading, .trailing], 10)
+                        .disabled(viewModel.isUIBlocked)
                         
                     TextField(secondPlayerName, text: $secondPlayerName)
                         .frame(width: 70, height: 50)
                         .padding([.leading, .trailing], 10)
+                        .disabled(viewModel.isUIBlocked)
                 }
                 
                 ScrollView(.horizontal) {
@@ -58,7 +68,9 @@ struct MainView: View {
                                         }) {
                                             Image(systemName: "x.circle")
                                                 .font(.caption2)
-                                                .foregroundColor(.red)
+                                                .foregroundColor(viewModel.isUIBlocked ? Color.gray : .red)
+                                                .padding([.leading], -5)
+                                                .animation(.default, value: viewModel.isUIBlocked)
                                         }
                                     }
                                     .frame(width: 65, height: 15)
@@ -71,6 +83,7 @@ struct MainView: View {
                             GridRow {
                                 ForEach(viewModel.columns.indices, id: \.self) { index in
                                     SelectableCell(isSelected: viewModel.columns[index].selection == .firstPlayer, action: {
+                                        guard !viewModel.isUIBlocked else  { return }
                                         viewModel.selectInRow(index, selection: .firstPlayer)
                                     })
                                 }
@@ -82,6 +95,7 @@ struct MainView: View {
                             GridRow {
                                 ForEach(viewModel.columns.indices, id: \.self) { index in
                                     SelectableCell(isSelected: viewModel.columns[index].selection == .secondPlayer) {
+                                        guard !viewModel.isUIBlocked else  { return }
                                         viewModel.selectInRow(index, selection: .secondPlayer)
                                     }
                                 }

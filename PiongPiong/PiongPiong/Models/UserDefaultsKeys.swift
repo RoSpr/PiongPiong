@@ -9,4 +9,6 @@ enum UserDefaultsKeys: String {
     case columnKey = "savedColumns"
     case firstPlayerName = "firstPlayerName"
     case secondPlayerName = "secondPlayerName"
+    
+    case isUIBlocked = "isUIBlocked"
 }
