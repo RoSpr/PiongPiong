@@ -9,8 +9,6 @@ import Foundation
 
 final class UserDefaultsManager {
     private let columnsKey = "savedColumns"
-//    private let firstPlayerNameKey = "firstPlayerNameKey"
-//    private let secondPlayerNameKey = "secondPlayerNameKey"
     
     func saveColumns(_ columns: [ColumnData]) {
         if let data = try? JSONEncoder().encode(columns) {
@@ -25,12 +23,4 @@ final class UserDefaultsManager {
         }
         return columns
     }
-    
-//    func savePlayerName(name: String, player: PlayerSelection) {
-//        UserDefaults.standard.set(name, forKey: player == .firstPlayer ? firstPlayerNameKey : secondPlayerNameKey)
-//    }
-//    
-//    func getPlayerName(_ player: PlayerSelection) -> String? {
-//        return UserDefaults.standard.string(forKey: player == .firstPlayer ? firstPlayerNameKey : secondPlayerNameKey)
-//    }
 }
