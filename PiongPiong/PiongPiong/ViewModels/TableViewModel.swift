@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 final class TableViewModel: ObservableObject {
     private let udHelper = UserDefaultsManager()
@@ -63,7 +64,9 @@ final class TableViewModel: ObservableObject {
     
     func addNewEntry() {
         let newColumn = ColumnData(date: Date(), selection: nil)
-        columns.append(newColumn)
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            columns.append(newColumn)
+        }
         gamesTotal = columns.count
     }
     
@@ -72,6 +75,8 @@ final class TableViewModel: ObservableObject {
             !isUIBlocked,
             columns.indices.contains(index)
         else { return }
-        columns.remove(at: index)
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            columns.remove(at: index)
+        }
     }
 }

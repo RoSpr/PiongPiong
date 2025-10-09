@@ -76,6 +76,10 @@ struct MainView: View {
                                         }
                                     }
                                     .frame(width: 65, height: 15)
+                                    .transition(.asymmetric(
+                                        insertion: .scale.combined(with: .opacity),
+                                        removal: .move(edge: .trailing).combined(with: .opacity)
+                                    ))
                                 }
                             }
                             .frame(width: 65)
@@ -89,6 +93,10 @@ struct MainView: View {
                                             viewModel.selectInRow(index, selection: .firstPlayer)
                                         }
                                     }
+                                    .transition(.asymmetric(
+                                        insertion: .scale.combined(with: .opacity),
+                                        removal: .move(edge: .trailing).combined(with: .opacity)
+                                    ))
                                 }
                             }
                             .frame(width: 65, height: 65)
@@ -102,6 +110,10 @@ struct MainView: View {
                                             viewModel.selectInRow(index, selection: .secondPlayer)
                                         }
                                     }
+                                    .transition(.asymmetric(
+                                        insertion: .scale.combined(with: .opacity),
+                                        removal: .move(edge: .trailing).combined(with: .opacity)
+                                    ))
                                 }
                             }
                             .frame(width: 65, height: 65)
