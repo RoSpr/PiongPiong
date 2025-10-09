@@ -56,15 +56,17 @@ struct MainView: View {
                     Grid(horizontalSpacing: 5, verticalSpacing: 5) {
                         HStack {
                             GridRow {
-                                ForEach(viewModel.columns.indices, id: \.self) { index in
+                                ForEach(viewModel.columns) { column in
                                     HStack {
-                                        Text(DateFormatter.tableDate.string(from: viewModel.columns[index].date))
+                                        Text(DateFormatter.tableDate.string(from: column.date))
                                             .frame(height: 20, alignment: .center)
                                             .minimumScaleFactor(0.75)
                                             .multilineTextAlignment(.center)
                                             .font(.footnote)
                                         Button(action: {
-                                            viewModel.removeEntryAt(index: index)
+                                            if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
+                                                viewModel.removeEntryAt(index: index)
+                                            }
                                         }) {
                                             Image(systemName: "x.circle")
                                                 .font(.caption2)
@@ -81,9 +83,11 @@ struct MainView: View {
                         
                         HStack {
                             GridRow {
-                                ForEach(viewModel.columns.indices, id: \.self) { index in
-                                    SelectableCell(isSelected: viewModel.columns[index].selection == .firstPlayer, isUIBlocked: viewModel.isUIBlocked) {
-                                        viewModel.selectInRow(index, selection: .firstPlayer)
+                                ForEach(viewModel.columns) { column in
+                                    SelectableCell(isSelected: column.selection == .firstPlayer, isUIBlocked: viewModel.isUIBlocked) {
+                                        if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
+                                            viewModel.selectInRow(index, selection: .firstPlayer)
+                                        }
                                     }
                                 }
                             }
@@ -92,9 +96,11 @@ struct MainView: View {
                         
                         HStack {
                             GridRow {
-                                ForEach(viewModel.columns.indices, id: \.self) { index in
-                                    SelectableCell(isSelected: viewModel.columns[index].selection == .secondPlayer, isUIBlocked: viewModel.isUIBlocked) {
-                                        viewModel.selectInRow(index, selection: .secondPlayer)
+                                ForEach(viewModel.columns) { column in
+                                    SelectableCell(isSelected: column.selection == .secondPlayer, isUIBlocked: viewModel.isUIBlocked) {
+                                        if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
+                                            viewModel.selectInRow(index, selection: .secondPlayer)
+                                        }
                                     }
                                 }
                             }

@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct ColumnData: Codable {
+struct ColumnData: Codable, Equatable, Identifiable {
+    var id: UUID = UUID()
     var date: Date
     var selection: PlayerSelection?
 }
