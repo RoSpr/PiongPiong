@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 struct MainView: View {
+    @State private var didAddColumn: Bool = false
     @StateObject var viewModel: TableViewModel
     @AppStorage(UserDefaultsKeys.firstPlayerName.rawValue) var firstPlayerName: String = "Player 1"
     @AppStorage(UserDefaultsKeys.secondPlayerName.rawValue) var secondPlayerName: String = "Player 2"
@@ -20,6 +21,10 @@ struct MainView: View {
                 
                 Button(action: {
                     viewModel.addNewEntry()
+                    Task {
+                        try? await Task.sleep(nanoseconds: 5_000_000)
+                        didAddColumn.toggle()
+                    }
                 }, label: {
                     Text("Add new game")
                         .font(.subheadline)
@@ -52,75 +57,87 @@ struct MainView: View {
                         .disabled(viewModel.isUIBlocked)
                 }
                 
-                ScrollView(.horizontal) {
-                    Grid(horizontalSpacing: 5, verticalSpacing: 5) {
-                        HStack {
-                            GridRow {
-                                ForEach(viewModel.columns) { column in
-                                    HStack {
-                                        Text(DateFormatter.tableDate.string(from: column.date))
-                                            .frame(height: 20, alignment: .center)
-                                            .minimumScaleFactor(0.75)
-                                            .multilineTextAlignment(.center)
-                                            .font(.footnote)
-                                        Button(action: {
-                                            if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
-                                                viewModel.removeEntryAt(index: index)
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal) {
+                        Grid(horizontalSpacing: 5, verticalSpacing: 5) {
+                            HStack {
+                                GridRow {
+                                    ForEach(viewModel.columns) { column in
+                                        HStack {
+                                            Text(DateFormatter.tableDate.string(from: column.date))
+                                                .frame(height: 20, alignment: .center)
+                                                .minimumScaleFactor(0.75)
+                                                .multilineTextAlignment(.center)
+                                                .font(.footnote)
+                                            Button(action: {
+                                                if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
+                                                    viewModel.removeEntryAt(index: index)
+                                                }
+                                            }) {
+                                                Image(systemName: "x.circle")
+                                                    .font(.caption2)
+                                                    .foregroundColor(viewModel.isUIBlocked ? Color.gray : .red)
+                                                    .padding([.leading], -5)
+                                                    .animation(.default, value: viewModel.isUIBlocked)
                                             }
-                                        }) {
-                                            Image(systemName: "x.circle")
-                                                .font(.caption2)
-                                                .foregroundColor(viewModel.isUIBlocked ? Color.gray : .red)
-                                                .padding([.leading], -5)
-                                                .animation(.default, value: viewModel.isUIBlocked)
                                         }
+                                        .frame(width: 65, height: 15)
+                                        .id(column.id)
+                                        .transition(.asymmetric(
+                                            insertion: .scale.combined(with: .opacity),
+                                            removal: .move(edge: .trailing).combined(with: .opacity)
+                                        ))
                                     }
-                                    .frame(width: 65, height: 15)
-                                    .transition(.asymmetric(
-                                        insertion: .scale.combined(with: .opacity),
-                                        removal: .move(edge: .trailing).combined(with: .opacity)
-                                    ))
                                 }
+                                .frame(width: 65)
                             }
-                            .frame(width: 65)
+                            
+                            HStack {
+                                GridRow {
+                                    ForEach(viewModel.columns) { column in
+                                        SelectableCell(isSelected: column.selection == .firstPlayer, isUIBlocked: viewModel.isUIBlocked) {
+                                            if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
+                                                viewModel.selectInRow(index, selection: .firstPlayer)
+                                            }
+                                        }
+                                        .id(column.id)
+                                        .transition(.asymmetric(
+                                            insertion: .scale.combined(with: .opacity),
+                                            removal: .move(edge: .trailing).combined(with: .opacity)
+                                        ))
+                                    }
+                                }
+                                .frame(width: 65, height: 65)
+                            }
+                            
+                            HStack {
+                                GridRow {
+                                    ForEach(viewModel.columns) { column in
+                                        SelectableCell(isSelected: column.selection == .secondPlayer, isUIBlocked: viewModel.isUIBlocked) {
+                                            if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
+                                                viewModel.selectInRow(index, selection: .secondPlayer)
+                                            }
+                                        }
+                                        .id(column.id)
+                                        .transition(.asymmetric(
+                                            insertion: .scale.combined(with: .opacity),
+                                            removal: .move(edge: .trailing).combined(with: .opacity)
+                                        ))
+                                    }
+                                }
+                                .frame(width: 65, height: 65)
+                            }
                         }
-                        
-                        HStack {
-                            GridRow {
-                                ForEach(viewModel.columns) { column in
-                                    SelectableCell(isSelected: column.selection == .firstPlayer, isUIBlocked: viewModel.isUIBlocked) {
-                                        if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
-                                            viewModel.selectInRow(index, selection: .firstPlayer)
-                                        }
-                                    }
-                                    .transition(.asymmetric(
-                                        insertion: .scale.combined(with: .opacity),
-                                        removal: .move(edge: .trailing).combined(with: .opacity)
-                                    ))
-                                }
+                    }
+                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                    .onChange(of: didAddColumn) { _ in
+                        if let lastId = viewModel.columns.last?.id {
+                            withAnimation {
+                                proxy.scrollTo(lastId, anchor: .trailing)
                             }
-                            .frame(width: 65, height: 65)
-                        }
-                        
-                        HStack {
-                            GridRow {
-                                ForEach(viewModel.columns) { column in
-                                    SelectableCell(isSelected: column.selection == .secondPlayer, isUIBlocked: viewModel.isUIBlocked) {
-                                        if let index = viewModel.columns.firstIndex(where: { column.id == $0.id }) {
-                                            viewModel.selectInRow(index, selection: .secondPlayer)
-                                        }
-                                    }
-                                    .transition(.asymmetric(
-                                        insertion: .scale.combined(with: .opacity),
-                                        removal: .move(edge: .trailing).combined(with: .opacity)
-                                    ))
-                                }
-                            }
-                            .frame(width: 65, height: 65)
                         }
                     }
                 }
-                .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 5)
