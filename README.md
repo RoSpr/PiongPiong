@@ -1,2 +1,2 @@
 # PiongPiong
-Small pet project for tracking 1 vs 1 ping pong wins
+Small pet project for tracking winners in 1-on-1 table tennis matches
